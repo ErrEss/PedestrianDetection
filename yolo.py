@@ -19,8 +19,8 @@ from yolo3.utils import letterbox_image
 
 class YOLO(object):
     def __init__(self):
-        self.model_path = 'model_data/yolo_weights.h5' # model path or trained weights path
-        self.anchors_path = 'model_data/yolo_anchors.txt'
+#        self.model_path = 'model_data/yolo_weights.h5' # model path or trained weights path
+        self.anchors_path = 'model_data/bdd100k_anchors.txt'
         self.classes_path = 'model_data/bdd100k_classes.txt'
         self.score = 0.3
         self.iou = 0.45
