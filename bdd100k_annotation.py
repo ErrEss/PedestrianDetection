@@ -5,7 +5,7 @@ from os import path as osp
 from os import getcwd
 import sys
 
-classes = ["bus","traffic light","traffic sign","person","bike","truck","motor","car","train","rider"]
+classes = ["person"]
 
 def parse_args():
     """Use argparse to get command line arguments."""
@@ -17,8 +17,8 @@ def parse_args():
 
 
 def label2det(label):
-    f = open('train.txt', 'a+')
-    f.write('/media/erress/Personal/Programming/BennettUniversity/bdd100k/images/100k/train/%s.jpg' % (label['name']))
+    f = open('val.txt', 'a+')
+    f.write('/media/erress/Personal/Programming/BennettUniversity/bdd100k/images/100k/val/%s.jpg' % (label['name']))
 #    f.write('%s/bdd100k/images/100k/train/%s.jpg' % (wd,label['name']))
     for frame in label['frames']:
         for obj in frame['objects']:
