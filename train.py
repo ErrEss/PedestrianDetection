@@ -15,9 +15,10 @@ from yolo3.utils import get_random_data
 
 def _main():
     annotation_path = 'train.txt'
+    annotation_path2 = 'val.txt'
     log_dir = 'logs/000/'
     classes_path = 'model_data/bdd100k_classes.txt'
-    anchors_path = 'model_data/yolo_anchors.txt'
+    anchors_path = 'model_data/bdd100k_anchors.txt'
     class_names = get_classes(classes_path)
     num_classes = len(class_names)
     anchors = get_anchors(anchors_path)
@@ -38,15 +39,17 @@ def _main():
     reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=3, verbose=1)
     early_stopping = EarlyStopping(monitor='val_loss', min_delta=0, patience=10, verbose=1)
 
-    val_split = 0.1
     with open(annotation_path) as f:
         lines = f.readlines()
+    with open(annotation_path2) as f2:
+        lines2 = f2.readlines()
     np.random.seed(10101)
     np.random.shuffle(lines)
+    np.random.shuffle(lines2)
     np.random.seed(None)
-    num_val = int(len(lines)*val_split)
-    num_train = len(lines) - num_val
-
+    num_train = int(len(lines))
+    num_val = int(len(lines2))
+    
     # Train with frozen layers first, to get a stable loss.
     # Adjust num epochs to your dataset. This step is enough to obtain a not bad model.
     if True:
@@ -58,7 +61,7 @@ def _main():
         print('Train on {} samples, val on {} samples, with batch size {}.'.format(num_train, num_val, batch_size))
         model.fit_generator(data_generator_wrapper(lines[:num_train], batch_size, input_shape, anchors, num_classes),
                 steps_per_epoch=max(1, num_train//batch_size),
-                validation_data=data_generator_wrapper(lines[num_train:], batch_size, input_shape, anchors, num_classes),
+                validation_data=data_generator_wrapper(lines2[:num_val], batch_size, input_shape, anchors, num_classes),
                 validation_steps=max(1, num_val//batch_size),
                 epochs=50,
                 initial_epoch=0,
@@ -77,7 +80,7 @@ def _main():
         print('Train on {} samples, val on {} samples, with batch size {}.'.format(num_train, num_val, batch_size))
         model.fit_generator(data_generator_wrapper(lines[:num_train], batch_size, input_shape, anchors, num_classes),
             steps_per_epoch=max(1, num_train//batch_size),
-            validation_data=data_generator_wrapper(lines[num_train:], batch_size, input_shape, anchors, num_classes),
+            validation_data=data_generator_wrapper(lines2[:num_val], batch_size, input_shape, anchors, num_classes),
             validation_steps=max(1, num_val//batch_size),
             epochs=100,
             initial_epoch=50,
@@ -147,7 +150,7 @@ def create_tiny_model(input_shape, anchors, num_classes, load_pretrained=True, f
     print('Create Tiny YOLOv3 model with {} anchors and {} classes.'.format(num_anchors, num_classes))
 
     if load_pretrained:
-        model_body.load_weights(weights_path, by_name=True, skip_mismatch=True)
+        model_body.load_weights(weights_path, by_name=True, skip_mismatch=True																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																			)
         print('Load weights {}.'.format(weights_path))
         if freeze_body in [1, 2]:
             # Freeze the darknet body or freeze all but 2 output layers.
